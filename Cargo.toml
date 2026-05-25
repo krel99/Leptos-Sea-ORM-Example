@@ -1,0 +1,65 @@
+[package]
+name = "db_test"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+leptos = { version = "0.8.0", features = ["nightly"] }
+leptos_router = { version = "0.8.0", features = ["nightly"] }
+leptos_meta = { version = "0.8.0" }
+axum = { version = "0.8.0", optional = true }
+console_error_panic_hook = { version = "0.1", optional = true }
+leptos_axum = { version = "0.8.0", optional = true }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
+wasm-bindgen = { version = "=0.2.108", optional = true }
+sea-orm = { version = "1.0", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"], optional = true }
+sea-orm-migration = { version = "1.0", optional = true }
+dotenv = { version = "0.15", optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+uuid = { version = "1.5", features = ["v4", "serde"], optional = true }
+thiserror = "1.0"
+rand = { version = "0.8", optional = true }
+
+[features]
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:wasm-bindgen",
+]
+ssr = [
+    "dep:axum",
+    "dep:tokio",
+    "dep:leptos_axum",
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "dep:sea-orm",
+    "dep:sea-orm-migration",
+    "dep:dotenv",
+    "dep:chrono",
+    "dep:uuid",
+    "dep:rand",
+]
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[package.metadata.leptos]
+output-name = "db_test"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+browserquery = "defaults"
+env = "DEV"
+bin-features = ["ssr"]
+bin-default-features = false
+lib-features = ["hydrate"]
+lib-default-features = false
